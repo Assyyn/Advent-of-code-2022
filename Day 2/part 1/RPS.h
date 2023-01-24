@@ -21,14 +21,14 @@ enum Symbol
     scissors,
 };
 
-constexpr int static value(char ch)
+constexpr int static value(const char ch)
 {
     constexpr std::array<std::pair<char, char>, 3> rpsValues{
         {{'A', 'X'}, {'B', 'Y'}, {'C', 'Z'}}};
 
-    for (int index{1}; const auto& [x, y] : rpsValues)
+    for (int index{1}; const auto& [key1, key2] : rpsValues)
     {
-        if (x == ch || y == ch)
+        if (ch == key1 || ch == key2)
             return index;
 
         ++index;
@@ -37,7 +37,7 @@ constexpr int static value(char ch)
     return 0;
 }
 
-constexpr int static compare(int p1, int p2)
+constexpr int static compare(const int p1, const int p2)
 {
     if (p1 < rock || p1 > scissors || p2 < rock || p2 > scissors)
         return -1;
