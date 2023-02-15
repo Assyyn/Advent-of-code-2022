@@ -21,11 +21,11 @@ enum Symbol
     scissors,
 };
 
+constinit std::array<std::pair<char, char>, 3> rpsValues{
+    {{'A', 'X'}, {'B', 'Y'}, {'C', 'Z'}}};
+
 constexpr int static value(const char ch)
 {
-    constexpr std::array<std::pair<char, char>, 3> rpsValues{
-        {{'A', 'X'}, {'B', 'Y'}, {'C', 'Z'}}};
-
     for (int index{1}; const auto& [key1, key2] : rpsValues)
     {
         if (ch == key1 || ch == key2)
