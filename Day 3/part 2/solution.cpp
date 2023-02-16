@@ -25,11 +25,11 @@ constinit std::array<std::pair<char, int>, 52> priorities_{[] {
     return temp_;
 }()};
 
-int get_priority(const char target_)
+int get_priority(const char badge_type)
 {
     return std::find_if(
                priorities_.begin(), priorities_.end(),
-               [&](const auto& pair_) { return pair_.first == target_; })
+               [&](const auto& pair_) { return pair_.first == badge_type; })
         ->second;
 }
 
