@@ -3,8 +3,10 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <ranges>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <vector>
 
 void seek_to_begin(std::istream& is)
@@ -56,6 +58,46 @@ Instruction parse_instructions(std::string_view line)
     return result;
 }
 
+void print_current_state(std::vector<Stack> stacks, std::size_t max_stack_size)
+{
+    std::for_each(stacks.begin(), stacks.end(), [=](Stack& stack) {
+        std::ranges::reverse(stack.begin(), stack.end());
+        stack.resize(max_stack_size);
+        std::ranges::reverse(stack.begin(), stack.end());
+    });
+
+    for (std::size_t idx = 0; idx < max_stack_size; ++idx)
+    {
+        for (const auto& stack : stacks)
+        {
+            if (idx > stack.size() - 1)
+                std::cout << Crate();
+            else
+                std::cout << stack[idx];
+
+            std::cout << ' ';
+        }
+        std::cout << '\n';
+    }
+
+    std::cout << ' ';
+    for (std::size_t count = 1; count <= stacks.size(); ++count)
+    {
+        std::cout << count << Crate();
+    }
+    std::cout << '\n';
+}
+
+std::size_t find_max_stack_size(const std::vector<Stack>& stacks)
+{
+    std::size_t max_size_ = 0;
+    for (const auto& stack : stacks)
+    {
+        max_size_ = std::max(max_size_, stack.size());
+    }
+    return max_size_;
+}
+
 int main()
 {
     std::fstream file("input.txt");
@@ -76,14 +118,23 @@ int main()
     std::getline(file, line);
     std::getline(file, line);
 
+    print_current_state(stacks, find_max_stack_size(stacks));
+
     while (std::getline(file, line))
     {
+        system("clear");
+        std::cout << line << '\n';
+
         auto instruction = parse_instructions(line);
 
         move_crates(instruction.how_many, instruction.from_, instruction.to_,
                     stacks);
+
+        print_current_state(stacks, find_max_stack_size(stacks));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
+    // print the top of the all the stacks
     for (const auto& stack : stacks)
     {
         std::cout << *std::find_if(

@@ -51,24 +51,25 @@ void move_crate(int from_stack, int to_stack, std::vector<Stack>& stacks)
     Stack& To_stack = stacks.at(to_stack - 1);
     Stack& From_stack = stacks.at(from_stack - 1);
 
+    auto insert_at_index = std::distance(
+        std::find_if(To_stack.begin(), To_stack.end(),
+                     [](const Crate& crate) { return !crate.is_empty(); }),
+        std::end(To_stack));
+
     std::ranges::reverse(To_stack.begin(), To_stack.end());
 
     auto crate_to_move =
         std::find_if(From_stack.begin(), From_stack.end(),
                      [](const Crate& crate) { return !crate.is_empty(); });
 
-    auto insert_after_pos =
-        std::find_if(To_stack.rbegin(), To_stack.rend(),
-                     [](const Crate& crate) { return !crate.is_empty(); });
-
-    if (insert_after_pos == To_stack.rend())
+    if (insert_at_index == To_stack.size())
         To_stack.push_back(std::move(*crate_to_move));
     else
-        To_stack.insert(insert_after_pos.base(), *crate_to_move);
+        To_stack.at(insert_at_index) = std::move(*crate_to_move);
 
     std::ranges::reverse(To_stack.begin(), To_stack.end());
 
-    *crate_to_move = Crate();
+    From_stack.erase(crate_to_move);
 }
 
 void move_crates(int how_many, int from_stack, int to_stack,
