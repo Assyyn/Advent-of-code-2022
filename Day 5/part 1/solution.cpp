@@ -25,8 +25,8 @@ stack_info get_stack_info(std::istream& is)
 {
     std::size_t stack_size = 0;
     std::string buf;
-    for (; std::getline(is, buf) && !std::isdigit(buf.at(1)); ++stack_size)
-        ;
+    while (std::getline(is, buf) && !std::isdigit(buf.at(1)))
+        ++stack_size;
 
     std::int_fast32_t num_stacks;
 
@@ -102,19 +102,24 @@ int main()
 {
     std::fstream file("input.txt");
 
+    if (!file)
+    {
+        std::cerr << "Could not open file.";
+        return 1;
+    }
+
     const auto stack_info = get_stack_info(file);
     const auto initial_stack_size_max = stack_info.size;
     const auto num_stacks = stack_info.num_stacks;
 
     std::vector<Stack> stacks(num_stacks);
 
+    std::string line;
     for (std::size_t count = 0; count < initial_stack_size_max; ++count)
     {
-        std::string line;
         std::getline(file, line);
         read_crates_from_line(line, stacks, num_stacks);
     }
-    std::string line;
     std::getline(file, line);
     std::getline(file, line);
 
